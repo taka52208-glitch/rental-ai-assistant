@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>賃貸AIアシスタント - デザインテーマセレクター</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .project-info {
+            display: inline-block;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .theme-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .theme-card.selected {
+            outline: 4px solid #00c853;
+            outline-offset: 4px;
+        }
+
+        .theme-card.selected::after {
+            content: '選択中';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #00c853;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .theme-preview {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-content {
+            padding: 25px;
+        }
+
+        .theme-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .theme-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+
+        .theme-tagline {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .color-swatch {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch::after {
+            content: attr(data-color);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #999;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .color-swatch:hover::after {
+            opacity: 1;
+        }
+
+        .theme-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .theme-description {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .select-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .select-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Theme 1: Trust & Reliability */
+        .theme-1 .theme-preview {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #4a90b8 100%);
+        }
+
+        .theme-1 .theme-preview::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+        }
+
+        .theme-1 .theme-preview::after {
+            content: '信頼の青';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .theme-1 .select-btn {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+        }
+
+        /* Theme 2: Modern Tech */
+        .theme-2 .theme-preview {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d2d5a 100%);
+            position: relative;
+        }
+
+        .theme-2 .theme-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(157, 78, 221, 0.3) 0%, transparent 50%);
+        }
+
+        .theme-2 .theme-preview::after {
+            content: 'AI TECH';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00d4ff;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .theme-2 .select-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #9d4edd 100%);
+        }
+
+        /* Theme 3: Friendly & Warm */
+        .theme-3 .theme-preview {
+            background: linear-gradient(135deg, #ff9a56 0%, #ffbd59 50%, #ffe066 100%);
+        }
+
+        .theme-3 .theme-preview::before {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .theme-3 .theme-preview::after {
+            content: 'Friendly';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .theme-3 .select-btn {
+            background: linear-gradient(135deg, #ff9a56 0%, #ffbd59 100%);
+        }
+
+        /* Theme 4: Premium Luxury */
+        .theme-4 .theme-preview {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
+        }
+
+        .theme-4 .theme-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 45%, rgba(212, 175, 55, 0.1) 50%, transparent 55%);
+        }
+
+        .theme-4 .theme-preview::after {
+            content: 'PREMIUM';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d4af37;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+        }
+
+        .theme-4 .select-btn {
+            background: linear-gradient(135deg, #1a1a1a 0%, #d4af37 100%);
+        }
+
+        /* Preview Section */
+        .preview-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .preview-header h2 {
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .preview-header p {
+            color: #888;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            min-height: 500px;
+        }
+
+        @media (max-width: 900px) {
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Landing Page Preview */
+        .landing-preview {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .landing-header {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .landing-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .landing-nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .landing-nav a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .landing-nav a:hover {
+            opacity: 0.7;
+        }
+
+        .landing-hero {
+            padding: 60px 30px;
+            text-align: center;
+        }
+
+        .landing-hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .landing-hero p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .landing-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .landing-cta:hover {
+            transform: scale(1.05);
+        }
+
+        .landing-features {
+            padding: 40px 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Chat Preview */
+        .chat-preview {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .chat-status {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 350px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input {
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 25px;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .chat-input button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Theme-specific Preview Styles */
+        /* Trust Theme Preview */
+        .preview-trust .landing-preview {
+            background: #f8fafc;
+        }
+
+        .preview-trust .landing-header {
+            background: #1e3a5f;
+        }
+
+        .preview-trust .landing-logo {
+            color: white;
+        }
+
+        .preview-trust .landing-nav a {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .preview-trust .landing-hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            color: white;
+        }
+
+        .preview-trust .landing-cta {
+            background: #4a90b8;
+            color: white;
+        }
+
+        .preview-trust .landing-features {
+            background: white;
+        }
+
+        .preview-trust .feature-item {
+            background: #f0f7ff;
+        }
+
+        .preview-trust .feature-icon {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .preview-trust .feature-item h3 {
+            color: #1e3a5f;
+        }
+
+        .preview-trust .feature-item p {
+            color: #5a7a9a;
+        }
+
+        .preview-trust .chat-preview {
+            background: #f8fafc;
+        }
+
+        .preview-trust .chat-header {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .preview-trust .chat-avatar {
+            background: #4a90b8;
+        }
+
+        .preview-trust .chat-messages {
+            background: #f0f7ff;
+        }
+
+        .preview-trust .message.bot {
+            background: white;
+            color: #1e3a5f;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .preview-trust .message.user {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .preview-trust .chat-input {
+            background: white;
+        }
+
+        .preview-trust .chat-input input {
+            background: #f0f7ff;
+            color: #1e3a5f;
+        }
+
+        .preview-trust .chat-input button {
+            background: #1e3a5f;
+            color: white;
+        }
+
+        /* Tech Theme Preview */
+        .preview-tech .landing-preview {
+            background: #0f0f23;
+        }
+
+        .preview-tech .landing-header {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .preview-tech .landing-logo {
+            color: #00d4ff;
+        }
+
+        .preview-tech .landing-nav a {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .preview-tech .landing-hero {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: white;
+        }
+
+        .preview-tech .landing-hero h1 {
+            background: linear-gradient(90deg, #00d4ff, #9d4edd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .preview-tech .landing-cta {
+            background: linear-gradient(90deg, #00d4ff, #9d4edd);
+            color: white;
+        }
+
+        .preview-tech .landing-features {
+            background: #1a1a3e;
+        }
+
+        .preview-tech .feature-item {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .preview-tech .feature-icon {
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+            color: white;
+        }
+
+        .preview-tech .feature-item h3 {
+            color: #00d4ff;
+        }
+
+        .preview-tech .feature-item p {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .preview-tech .chat-preview {
+            background: #0f0f23;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .preview-tech .chat-header {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), rgba(157, 78, 221, 0.2));
+            color: white;
+        }
+
+        .preview-tech .chat-avatar {
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+        }
+
+        .preview-tech .chat-messages {
+            background: #1a1a3e;
+        }
+
+        .preview-tech .message.bot {
+            background: rgba(0, 212, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .preview-tech .message.user {
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+            color: white;
+        }
+
+        .preview-tech .chat-input {
+            background: rgba(0,0,0,0.3);
+        }
+
+        .preview-tech .chat-input input {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .preview-tech .chat-input button {
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+            color: white;
+        }
+
+        /* Friendly Theme Preview */
+        .preview-friendly .landing-preview {
+            background: #fffbf5;
+        }
+
+        .preview-friendly .landing-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(255, 154, 86, 0.1);
+        }
+
+        .preview-friendly .landing-logo {
+            color: #ff9a56;
+        }
+
+        .preview-friendly .landing-nav a {
+            color: #666;
+        }
+
+        .preview-friendly .landing-hero {
+            background: linear-gradient(135deg, #ff9a56 0%, #ffbd59 100%);
+            color: white;
+        }
+
+        .preview-friendly .landing-cta {
+            background: white;
+            color: #ff9a56;
+            font-weight: 700;
+        }
+
+        .preview-friendly .landing-features {
+            background: white;
+        }
+
+        .preview-friendly .feature-item {
+            background: #fff8f0;
+        }
+
+        .preview-friendly .feature-icon {
+            background: linear-gradient(135deg, #ff9a56, #ffbd59);
+            color: white;
+        }
+
+        .preview-friendly .feature-item h3 {
+            color: #ff8a3d;
+        }
+
+        .preview-friendly .feature-item p {
+            color: #888;
+        }
+
+        .preview-friendly .chat-preview {
+            background: #fffbf5;
+        }
+
+        .preview-friendly .chat-header {
+            background: linear-gradient(135deg, #ff9a56, #ffbd59);
+            color: white;
+        }
+
+        .preview-friendly .chat-avatar {
+            background: white;
+            color: #ff9a56;
+        }
+
+        .preview-friendly .chat-messages {
+            background: #fff8f0;
+        }
+
+        .preview-friendly .message.bot {
+            background: white;
+            color: #555;
+            box-shadow: 0 2px 8px rgba(255, 154, 86, 0.15);
+        }
+
+        .preview-friendly .message.user {
+            background: linear-gradient(135deg, #ff9a56, #ffbd59);
+            color: white;
+        }
+
+        .preview-friendly .chat-input {
+            background: white;
+        }
+
+        .preview-friendly .chat-input input {
+            background: #fff8f0;
+            color: #555;
+        }
+
+        .preview-friendly .chat-input button {
+            background: linear-gradient(135deg, #ff9a56, #ffbd59);
+            color: white;
+        }
+
+        /* Premium Theme Preview */
+        .preview-premium .landing-preview {
+            background: #1a1a1a;
+        }
+
+        .preview-premium .landing-header {
+            background: #0d0d0d;
+        }
+
+        .preview-premium .landing-logo {
+            color: #d4af37;
+            letter-spacing: 3px;
+        }
+
+        .preview-premium .landing-nav a {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .preview-premium .landing-hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+        }
+
+        .preview-premium .landing-hero h1 {
+            color: #d4af37;
+        }
+
+        .preview-premium .landing-cta {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .preview-premium .landing-features {
+            background: #1a1a1a;
+        }
+
+        .preview-premium .feature-item {
+            background: #252525;
+            border: 1px solid #333;
+        }
+
+        .preview-premium .feature-icon {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .preview-premium .feature-item h3 {
+            color: #d4af37;
+        }
+
+        .preview-premium .feature-item p {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .preview-premium .chat-preview {
+            background: #1a1a1a;
+            border: 1px solid #333;
+        }
+
+        .preview-premium .chat-header {
+            background: #0d0d0d;
+            color: white;
+            border-bottom: 1px solid #d4af37;
+        }
+
+        .preview-premium .chat-avatar {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .preview-premium .chat-messages {
+            background: #1a1a1a;
+        }
+
+        .preview-premium .message.bot {
+            background: #252525;
+            color: white;
+            border: 1px solid #333;
+        }
+
+        .preview-premium .message.user {
+            background: linear-gradient(135deg, #d4af37, #b8962f);
+            color: #1a1a1a;
+        }
+
+        .preview-premium .chat-input {
+            background: #0d0d0d;
+        }
+
+        .preview-premium .chat-input input {
+            background: #252525;
+            color: white;
+            border: 1px solid #333;
+        }
+
+        .preview-premium .chat-input button {
+            background: #d4af37;
+            color: #1a1a1a;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>デザインテーマセレクター</h1>
+            <p class="subtitle">賃貸AIアシスタント - 最適なテーマを選択してください</p>
+            <div class="project-info">
+                不動産仲介向け AI自動応答デモシステム | ランディングページ + LINE風チャット
+            </div>
+        </header>
+
+        <div class="themes-grid">
+            <!-- Theme 1: Trust & Reliability -->
+            <div class="theme-card theme-1" data-theme="trust" onclick="selectTheme('trust')">
+                <div class="theme-preview"></div>
+                <div class="theme-content">
+                    <span class="theme-number">01</span>
+                    <h3 class="theme-name">Trust Blue</h3>
+                    <p class="theme-tagline">信頼と安心感を重視した不動産らしいデザイン</p>
+
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background: #1e3a5f" data-color="#1e3a5f"></div>
+                        <div class="color-swatch" style="background: #2d5a87" data-color="#2d5a87"></div>
+                        <div class="color-swatch" style="background: #4a90b8" data-color="#4a90b8"></div>
+                        <div class="color-swatch" style="background: #f0f7ff" data-color="#f0f7ff"></div>
+                        <div class="color-swatch" style="background: #ffffff" data-color="#ffffff"></div>
+                    </div>
+
+                    <div class="theme-features">
+                        <span class="feature-tag">信頼感</span>
+                        <span class="feature-tag">安定感</span>
+                        <span class="feature-tag">誠実</span>
+                        <span class="feature-tag">落ち着き</span>
+                    </div>
+
+                    <p class="theme-description">
+                        深みのあるネイビーブルーを基調とし、不動産業界で親しまれている「信頼の青」を採用。
+                        堅実で誠実な印象を与え、お客様に安心感を提供します。
+                        法人向けデモに最適な、プロフェッショナルなデザインです。
+                    </p>
+                </div>
+                <button class="select-btn">このテーマを選択</button>
+            </div>
+
+            <!-- Theme 2: Modern Tech -->
+            <div class="theme-card theme-2" data-theme="tech" onclick="selectTheme('tech')">
+                <div class="theme-preview"></div>
+                <div class="theme-content">
+                    <span class="theme-number">02</span>
+                    <h3 class="theme-name">Tech Gradient</h3>
+                    <p class="theme-tagline">AIとテクノロジーを感じさせる先進的デザイン</p>
+
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background: #0f0f23" data-color="#0f0f23"></div>
+                        <div class="color-swatch" style="background: #1a1a3e" data-color="#1a1a3e"></div>
+                        <div class="color-swatch" style="background: #00d4ff" data-color="#00d4ff"></div>
+                        <div class="color-swatch" style="background: #9d4edd" data-color="#9d4edd"></div>
+                        <div class="color-swatch" style="background: #ffffff" data-color="#ffffff"></div>
+                    </div>
+
+                    <div class="theme-features">
+                        <span class="feature-tag">先進的</span>
+                        <span class="feature-tag">革新</span>
+                        <span class="feature-tag">AI感</span>
+                        <span class="feature-tag">未来志向</span>
+                    </div>
+
+                    <p class="theme-description">
+                        ダークモードベースにシアンとパープルのグラデーションを効果的に配置。
+                        AI技術の先進性を視覚的に表現し、革新的なソリューションであることを印象付けます。
+                        テック志向の不動産会社に響くデザインです。
+                    </p>
+                </div>
+                <button class="select-btn">このテーマを選択</button>
+            </div>
+
+            <!-- Theme 3: Friendly & Warm -->
+            <div class="theme-card theme-3" data-theme="friendly" onclick="selectTheme('friendly')">
+                <div class="theme-preview"></div>
+                <div class="theme-content">
+                    <span class="theme-number">03</span>
+                    <h3 class="theme-name">Sunny Orange</h3>
+                    <p class="theme-tagline">親しみやすく温かみのあるフレンドリーデザイン</p>
+
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background: #ff9a56" data-color="#ff9a56"></div>
+                        <div class="color-swatch" style="background: #ffbd59" data-color="#ffbd59"></div>
+                        <div class="color-swatch" style="background: #ffe066" data-color="#ffe066"></div>
+                        <div class="color-swatch" style="background: #fff8f0" data-color="#fff8f0"></div>
+                        <div class="color-swatch" style="background: #ffffff" data-color="#ffffff"></div>
+                    </div>
+
+                    <div class="theme-features">
+                        <span class="feature-tag">親しみやすさ</span>
+                        <span class="feature-tag">温かみ</span>
+                        <span class="feature-tag">明るい</span>
+                        <span class="feature-tag">ポジティブ</span>
+                    </div>
+
+                    <p class="theme-description">
+                        オレンジからイエローへの暖色グラデーションで、LINE等のチャットアプリに馴染む親しみやすさを表現。
+                        堅苦しさを排除し、気軽に相談できるAIアシスタントの印象を与えます。
+                        若い世代やカジュアルな顧客層向けに最適です。
+                    </p>
+                </div>
+                <button class="select-btn">このテーマを選択</button>
+            </div>
+
+            <!-- Theme 4: Premium Luxury -->
+            <div class="theme-card theme-4" data-theme="premium" onclick="selectTheme('premium')">
+                <div class="theme-preview"></div>
+                <div class="theme-content">
+                    <span class="theme-number">04</span>
+                    <h3 class="theme-name">Gold Luxury</h3>
+                    <p class="theme-tagline">高級感とプレミアム感を演出するデザイン</p>
+
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background: #1a1a1a" data-color="#1a1a1a"></div>
+                        <div class="color-swatch" style="background: #2d2d2d" data-color="#2d2d2d"></div>
+                        <div class="color-swatch" style="background: #d4af37" data-color="#d4af37"></div>
+                        <div class="color-swatch" style="background: #f5f0e6" data-color="#f5f0e6"></div>
+                        <div class="color-swatch" style="background: #ffffff" data-color="#ffffff"></div>
+                    </div>
+
+                    <div class="theme-features">
+                        <span class="feature-tag">高級感</span>
+                        <span class="feature-tag">プレミアム</span>
+                        <span class="feature-tag">上質</span>
+                        <span class="feature-tag">洗練</span>
+                    </div>
+
+                    <p class="theme-description">
+                        ブラックにゴールドアクセントを組み合わせた、洗練されたラグジュアリーデザイン。
+                        高級賃貸物件を扱う不動産会社や、差別化を図りたい企業に最適。
+                        サービスの付加価値と品質の高さを印象付けます。
+                    </p>
+                </div>
+                <button class="select-btn">このテーマを選択</button>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <div class="preview-header">
+                <h2>プレビュー</h2>
+                <p id="preview-theme-name">テーマを選択すると、ここにプレビューが表示されます</p>
+            </div>
+
+            <div id="no-selection" style="text-align: center; padding: 100px 20px; color: #888;">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 20px; opacity: 0.5;">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <p style="font-size: 1.1rem;">上のテーマカードをクリックして選択してください</p>
+            </div>
+
+            <!-- Trust Theme Preview -->
+            <div id="preview-trust" class="preview-container preview-trust hidden">
+                <div class="landing-preview">
+                    <div class="landing-header">
+                        <span class="landing-logo">賃貸AIアシスタント</span>
+                        <nav class="landing-nav">
+                            <a href="#">機能</a>
+                            <a href="#">料金</a>
+                            <a href="#">導入事例</a>
+                            <a href="#">お問い合わせ</a>
+                        </nav>
+                    </div>
+                    <div class="landing-hero">
+                        <h1>AI が24時間<br>お部屋探しをサポート</h1>
+                        <p>賃貸仲介業務を効率化する、信頼のAIソリューション</p>
+                        <a href="#" class="landing-cta">無料デモを試す</a>
+                    </div>
+                    <div class="landing-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">24</div>
+                            <h3>24時間対応</h3>
+                            <p>深夜の問い合わせも自動応答</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">AI</div>
+                            <h3>高精度AI</h3>
+                            <p>自然な会話で物件提案</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">DB</div>
+                            <h3>データ連携</h3>
+                            <p>物件DBとリアルタイム同期</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-header">
+                        <div class="chat-avatar">AI</div>
+                        <div>
+                            <div class="chat-title">賃貸AIアシスタント</div>
+                            <div class="chat-status">オンライン</div>
+                        </div>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message bot">
+                            こんにちは！賃貸AIアシスタントです。お部屋探しのお手伝いをさせていただきます。
+                        </div>
+                        <div class="message user">
+                            渋谷駅周辺で1LDKを探しています
+                        </div>
+                        <div class="message bot">
+                            渋谷駅周辺の1LDKですね。ご希望の家賃帯はございますか？
+                        </div>
+                        <div class="message user">
+                            15万円以内でお願いします
+                        </div>
+                        <div class="message bot">
+                            かしこまりました。渋谷駅徒歩10分以内、1LDK、15万円以内で3件の物件が見つかりました。詳細をご案内いたします。
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="メッセージを入力...">
+                        <button>→</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Theme Preview -->
+            <div id="preview-tech" class="preview-container preview-tech hidden">
+                <div class="landing-preview">
+                    <div class="landing-header">
+                        <span class="landing-logo">RENTAL AI</span>
+                        <nav class="landing-nav">
+                            <a href="#">Features</a>
+                            <a href="#">Pricing</a>
+                            <a href="#">Cases</a>
+                            <a href="#">Contact</a>
+                        </nav>
+                    </div>
+                    <div class="landing-hero">
+                        <h1>次世代AI が<br>賃貸ビジネスを変革</h1>
+                        <p>最先端の自然言語処理で、顧客対応を自動化</p>
+                        <a href="#" class="landing-cta">START DEMO</a>
+                    </div>
+                    <div class="landing-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">24</div>
+                            <h3>Always On</h3>
+                            <p>24時間365日稼働</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">AI</div>
+                            <h3>Smart AI</h3>
+                            <p>GPT搭載の高精度応答</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⚡</div>
+                            <h3>Real-time</h3>
+                            <p>即座にデータ連携</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-header">
+                        <div class="chat-avatar">AI</div>
+                        <div>
+                            <div class="chat-title">RENTAL AI Assistant</div>
+                            <div class="chat-status">Active</div>
+                        </div>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message bot">
+                            Welcome! I'm your AI rental assistant. How can I help you find your perfect home?
+                        </div>
+                        <div class="message user">
+                            Looking for 1LDK near Shibuya
+                        </div>
+                        <div class="message bot">
+                            Got it! Searching for 1LDK apartments near Shibuya Station. What's your budget range?
+                        </div>
+                        <div class="message user">
+                            Under 150,000 yen
+                        </div>
+                        <div class="message bot">
+                            Perfect. I found 3 properties matching your criteria. Shall I show you the details?
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="Type a message...">
+                        <button>→</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friendly Theme Preview -->
+            <div id="preview-friendly" class="preview-container preview-friendly hidden">
+                <div class="landing-preview">
+                    <div class="landing-header">
+                        <span class="landing-logo">おうち探しAI</span>
+                        <nav class="landing-nav">
+                            <a href="#">できること</a>
+                            <a href="#">料金</a>
+                            <a href="#">導入例</a>
+                            <a href="#">相談する</a>
+                        </nav>
+                    </div>
+                    <div class="landing-hero">
+                        <h1>AIと一緒に<br>理想のお部屋を見つけよう</h1>
+                        <p>いつでも気軽に相談できる、あなたのお部屋探しパートナー</p>
+                        <a href="#" class="landing-cta">無料で試してみる</a>
+                    </div>
+                    <div class="landing-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">☀️</div>
+                            <h3>いつでも対応</h3>
+                            <p>深夜でも気軽に相談OK</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💬</div>
+                            <h3>かんたん会話</h3>
+                            <p>LINEみたいに話せる</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🏠</div>
+                            <h3>ぴったり提案</h3>
+                            <p>あなたに合う物件を紹介</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-header">
+                        <div class="chat-avatar">🏠</div>
+                        <div>
+                            <div class="chat-title">おうち探しAI</div>
+                            <div class="chat-status">チャット中</div>
+                        </div>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message bot">
+                            こんにちは！お部屋探しのお手伝いをしますね。どんなお部屋をお探しですか？
+                        </div>
+                        <div class="message user">
+                            渋谷の近くで1LDK探してます
+                        </div>
+                        <div class="message bot">
+                            渋谷エリアの1LDKですね！予算はどれくらいをお考えですか？
+                        </div>
+                        <div class="message user">
+                            15万くらいかな
+                        </div>
+                        <div class="message bot">
+                            了解です！渋谷駅から歩ける範囲で、15万円以内の1LDKを3件見つけました。見てみますか？
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="気軽にメッセージしてね...">
+                        <button>→</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Theme Preview -->
+            <div id="preview-premium" class="preview-container preview-premium hidden">
+                <div class="landing-preview">
+                    <div class="landing-header">
+                        <span class="landing-logo">PRESTIGE AI</span>
+                        <nav class="landing-nav">
+                            <a href="#">Service</a>
+                            <a href="#">Plan</a>
+                            <a href="#">Portfolio</a>
+                            <a href="#">Contact</a>
+                        </nav>
+                    </div>
+                    <div class="landing-hero">
+                        <h1>上質な暮らしを<br>AIがエスコート</h1>
+                        <p>プレミアム物件に特化した、ハイグレードなAIコンシェルジュ</p>
+                        <a href="#" class="landing-cta">EXPERIENCE DEMO</a>
+                    </div>
+                    <div class="landing-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">★</div>
+                            <h3>Premium Service</h3>
+                            <p>24時間対応のコンシェルジュ</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">AI</div>
+                            <h3>Intelligent AI</h3>
+                            <p>高度なパーソナライズ提案</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">◆</div>
+                            <h3>Exclusive</h3>
+                            <p>厳選された物件のみ掲載</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-header">
+                        <div class="chat-avatar">P</div>
+                        <div>
+                            <div class="chat-title">PRESTIGE Concierge</div>
+                            <div class="chat-status">At your service</div>
+                        </div>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message bot">
+                            ようこそ、PRESTIGE AIへ。あなただけの理想の住まいをお探しいたします。
+                        </div>
+                        <div class="message user">
+                            渋谷エリアで高級1LDKを探しています
+                        </div>
+                        <div class="message bot">
+                            渋谷エリアのプレミアム1LDKですね。ご予算はいかがでしょうか？
+                        </div>
+                        <div class="message user">
+                            25万円程度で
+                        </div>
+                        <div class="message bot">
+                            承知いたしました。渋谷の閑静なエリアより、タワーマンション含む厳選3物件をご用意いたしました。ご覧になりますか？
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="ご要望をお聞かせください...">
+                        <button>→</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn secondary" onclick="resetSelection()">選択をリセット</button>
+            <button class="action-btn primary" onclick="confirmSelection()">このテーマで決定</button>
+        </div>
+
+        <footer class="footer">
+            <p>賃貸AIアシスタント - デザインテーマセレクター</p>
+            <p style="margin-top: 8px; font-size: 0.8rem;">不動産仲介向けAI自動応答デモシステム</p>
+        </footer>
+    </div>
+
+    <script>
+        let selectedTheme = null;
+
+        const themeNames = {
+            trust: 'Trust Blue - 信頼と安心感のデザイン',
+            tech: 'Tech Gradient - 先進的AIテクノロジーデザイン',
+            friendly: 'Sunny Orange - 親しみやすいフレンドリーデザイン',
+            premium: 'Gold Luxury - 高級感プレミアムデザイン'
+        };
+
+        function selectTheme(theme) {
+            // Remove previous selection
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selection to clicked card
+            document.querySelector(`[data-theme="${theme}"]`).classList.add('selected');
+
+            // Hide all previews
+            document.getElementById('no-selection').classList.add('hidden');
+            document.querySelectorAll('.preview-container').forEach(preview => {
+                preview.classList.add('hidden');
+            });
+
+            // Show selected preview
+            document.getElementById(`preview-${theme}`).classList.remove('hidden');
+            document.getElementById('preview-theme-name').textContent = themeNames[theme];
+
+            selectedTheme = theme;
+
+            // Smooth scroll to preview
+            document.querySelector('.preview-section').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function resetSelection() {
+            selectedTheme = null;
+
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            document.querySelectorAll('.preview-container').forEach(preview => {
+                preview.classList.add('hidden');
+            });
+
+            document.getElementById('no-selection').classList.remove('hidden');
+            document.getElementById('preview-theme-name').textContent = 'テーマを選択すると、ここにプレビューが表示されます';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function confirmSelection() {
+            if (!selectedTheme) {
+                alert('テーマを選択してください');
+                return;
+            }
+
+            const confirmed = confirm(`「${themeNames[selectedTheme]}」を採用しますか？`);
+            if (confirmed) {
+                alert(`テーマ「${themeNames[selectedTheme]}」が選択されました。\n\n次のステップ: このテーマに基づいてLPとチャット画面のモックアップを作成します。`);
+
+                // Store selection in localStorage for future use
+                localStorage.setItem('selectedTheme', selectedTheme);
+                localStorage.setItem('selectedThemeData', JSON.stringify({
+                    name: themeNames[selectedTheme],
+                    timestamp: new Date().toISOString()
+                }));
+            }
+        }
+
+        // Check if there's a previously selected theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                selectTheme(savedTheme);
+            }
+        });
+    </script>
+</body>
+</html>
