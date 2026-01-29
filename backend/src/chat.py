@@ -1,21 +1,21 @@
-"""チャットサービス - Claude APIとの連携"""
+"""チャットサービス - Groq APIとの連携"""
 
 import os
-from anthropic import Anthropic
+from groq import Groq
 from .properties import get_properties_text
 
-# Anthropicクライアント
-client: Anthropic | None = None
+# Groqクライアント
+client: Groq | None = None
 
 
-def get_client() -> Anthropic:
-    """Anthropicクライアントを取得"""
+def get_client() -> Groq:
+    """Groqクライアントを取得"""
     global client
     if client is None:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY environment variable is not set")
-        client = Anthropic(api_key=api_key)
+            raise ValueError("GROQ_API_KEY environment variable is not set")
+        client = Groq(api_key=api_key)
     return client
 
 
@@ -57,11 +57,12 @@ async def generate_response(
     user_message: str,
     conversation_history: list[dict] | None = None,
 ) -> str:
-    """Claude APIを使用して応答を生成"""
-    anthropic_client = get_client()
+    """Groq APIを使用して応答を生成"""
+    groq_client = get_client()
 
     # 会話履歴を構築
-    messages = []
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+
     if conversation_history:
         for msg in conversation_history:
             messages.append({
@@ -75,13 +76,13 @@ async def generate_response(
         "content": user_message,
     })
 
-    # Claude APIを呼び出し
-    response = anthropic_client.messages.create(
-        model="claude-3-5-haiku-latest",
-        max_tokens=500,
-        system=SYSTEM_PROMPT,
+    # Groq APIを呼び出し（llama3-70bを使用）
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         messages=messages,
+        max_tokens=500,
+        temperature=0.7,
     )
 
     # レスポンスからテキストを抽出
-    return response.content[0].text
+    return response.choices[0].message.content

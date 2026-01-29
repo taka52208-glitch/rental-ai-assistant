@@ -53,6 +53,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3247",
         "http://127.0.0.1:3247",
+        "https://rental-ai-assistant.vercel.app",
+        "https://rental-ai-assistant-takas-projects-de61dd0f.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
